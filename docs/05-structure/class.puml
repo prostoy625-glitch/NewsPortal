@@ -1,0 +1,196 @@
+
+@startuml
+
+title NewsPortal — Диаграмма классов
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+' =====================================
+' 1. Пользователи и роли
+' =====================================
+
+package "Пользователи и роли" {
+
+    class User {
+        - id: int
+        - username: string
+        - email: string
+        - password: string
+        - role_id: int
+        - status: string
+        + login()
+        + logout()
+    }
+
+    class Role {
+        - id: int
+        - name: string
+        - description: string
+    }
+
+    User "*" --> "1" Role : имеет роль
+}
+
+' =====================================
+' 2. Новости и публикации
+' =====================================
+
+package "Управление новостями" {
+
+    class News {
+        - id: int
+        - author_id: int
+        - category_id: int
+        - status: NewsStatus
+        - created_at: datetime
+        - published_at: datetime
+        + create()
+        + update()
+        + submit()
+        + publish()
+    }
+
+    class NewsTranslation {
+        - id: int
+        - news_id: int
+        - language: LanguageCode
+        - title: string
+        - content: text
+        - excerpt: text
+    }
+
+    class Category {
+        - id: int
+        - name: string
+        - slug: string
+    }
+
+    class NewsImage {
+        - id: int
+        - news_id: int
+        - image_path: string
+        - is_main: bool
+    }
+
+    class Tag {
+        - id: int
+        - name: string
+    }
+
+    class NewsTag {
+        - news_id: int
+        - tag_id: int
+    }
+
+    News "1" *-- "1..*" NewsTranslation : переводы
+    News "*" --> "1" Category : категория
+    News "1" *-- "0..*" NewsImage : изображения
+    News "1" --> "0..*" NewsTag
+    Tag "1" --> "0..*" NewsTag
+}
+
+' =====================================
+' 3. Комментарии
+' =====================================
+
+package "Комментарии" {
+
+    class Comment {
+        - id: int
+        - news_id: int
+        - user_id: int
+        - content: text
+        - created_at: datetime
+        - status: string
+        + create()
+        + delete()
+    }
+
+    Comment "*" --> "1" News : относится к
+    Comment "*" --> "1" User : автор
+}
+
+' =====================================
+' 4. Журнал действий
+' =====================================
+
+package "Журнал активности" {
+
+    class ActivityLog {
+        - id: int
+        - user_id: int
+        - action: string
+        - description: text
+        - created_at: datetime
+    }
+
+    ActivityLog "*" --> "1" User : пользователь
+}
+
+' =====================================
+' 5. Основные PHP-классы проекта
+' =====================================
+
+package "Application / Core" {
+
+    class AuthController
+    class DashboardController
+    class HomeController
+    class MediaController
+
+    class TranslationService
+
+    class Auth
+    class Database {
+        - connection: PDO
+        + connect(): PDO
+    }
+
+    class Router
+    class View
+
+    AuthController ..> Auth
+    DashboardController ..> Auth
+    HomeController ..> View
+    MediaController ..> Database
+    TranslationService ..> Database
+    AuthController ..> View
+}
+
+' =====================================
+' 6. Перечисления
+' =====================================
+
+enum NewsStatus {
+    draft
+    pending
+    revision
+    approved
+    published
+    rejected
+}
+
+enum LanguageCode {
+    ru
+    tg
+}
+
+News --> NewsStatus
+NewsTranslation --> LanguageCode
+
+' =====================================
+' Легенда MVC
+' =====================================
+
+legend bottom
+  |= Компонент |= Назначение |
+  | Controller | Обработка запросов пользователя |
+  | Model | Данные и бизнес-сущности |
+  | View | Отображение страниц |
+  | Core | Основные механизмы приложения |
+  | Service | Дополнительная бизнес-логика |
+endlegend
+
+@enduml
