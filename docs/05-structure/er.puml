@@ -1,0 +1,183 @@
+
+@startuml
+
+title NewsPortal — ER Diagram (Logical Database Model)
+
+hide circle
+skinparam linetype ortho
+skinparam shadowing false
+skinparam entity {
+    BackgroundColor #EAF2F8
+    BorderColor #2874A6
+}
+
+' =====================================
+' 1. ROLES
+' =====================================
+
+entity "roles" as roles {
+    * id : INT <<PK>>
+    --
+    name : VARCHAR(50)
+    description : VARCHAR(255)
+}
+
+' =====================================
+' 2. USERS
+' =====================================
+
+entity "users" as users {
+    * id : INT <<PK>>
+    --
+    role_id : INT <<FK>>
+    username : VARCHAR(100)
+    email : VARCHAR(150)
+    password : VARCHAR(255)
+    status : VARCHAR(20)
+    created_at : DATETIME
+}
+
+' =====================================
+' 3. CATEGORIES
+' =====================================
+
+entity "categories" as categories {
+    * id : INT <<PK>>
+    --
+    name : VARCHAR(150)
+    slug : VARCHAR(180)
+    description : TEXT
+    created_at : DATETIME
+}
+
+' =====================================
+' 4. NEWS
+' =====================================
+
+entity "news" as news {
+    * id : INT <<PK>>
+    --
+    author_id : INT <<FK>>
+    category_id : INT <<FK>>
+    status : VARCHAR(30)
+    created_at : DATETIME
+    updated_at : DATETIME
+    published_at : DATETIME
+}
+
+' =====================================
+' 5. NEWS TRANSLATIONS
+' =====================================
+
+entity "news_translations" as translations {
+    * id : INT <<PK>>
+    --
+    news_id : INT <<FK>>
+    language_code : VARCHAR(5)
+    title : VARCHAR(255)
+    excerpt : TEXT
+    content : LONGTEXT
+    --
+    UNIQUE(news_id, language_code)
+}
+
+' =====================================
+' 6. NEWS IMAGES
+' =====================================
+
+entity "news_images" as images {
+    * id : INT <<PK>>
+    --
+    news_id : INT <<FK>>
+    image_path : VARCHAR(255)
+    alt_text : VARCHAR(255)
+    is_main : BOOLEAN
+    created_at : DATETIME
+}
+
+' =====================================
+' 7. COMMENTS
+' =====================================
+
+entity "comments" as comments {
+    * id : INT <<PK>>
+    --
+    news_id : INT <<FK>>
+    user_id : INT <<FK>>
+    content : TEXT
+    status : VARCHAR(20)
+    created_at : DATETIME
+}
+
+' =====================================
+' 8. TAGS
+' =====================================
+
+entity "tags" as tags {
+    * id : INT <<PK>>
+    --
+    name : VARCHAR(100)
+    slug : VARCHAR(120)
+}
+
+' =====================================
+' 9. NEWS TAGS
+' =====================================
+
+entity "news_tags" as news_tags {
+    * news_id : INT <<PK, FK>>
+    * tag_id : INT <<PK, FK>>
+}
+
+' =====================================
+' 10. ACTIVITY LOGS
+' =====================================
+
+entity "activity_logs" as logs {
+    * id : INT <<PK>>
+    --
+    user_id : INT <<FK>>
+    action : VARCHAR(100)
+    description : TEXT
+    created_at : DATETIME
+}
+
+' =====================================
+' RELATIONSHIPS
+' =====================================
+
+roles ||--o{ users : has
+
+users ||--o{ news : creates
+
+categories ||--o{ news : contains
+
+news ||--|{ translations : has
+
+news ||--o{ images : contains
+
+news ||--o{ comments : receives
+
+users ||--o{ comments : writes
+
+news ||--o{ news_tags : linked
+
+tags ||--o{ news_tags : assigned
+
+users ||--o{ logs : generates
+
+' =====================================
+' LEGEND
+' =====================================
+
+legend bottom
+    |= Symbol |= Meaning |
+    | PK | Primary Key |
+    | FK | Foreign Key |
+    | UNIQUE | Unique constraint |
+    | 1 | One record |
+    | 0..* | Zero or many records |
+    | 1..* | One or many records |
+endlegend
+
+@enduml
