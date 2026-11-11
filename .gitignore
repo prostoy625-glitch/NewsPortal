@@ -1,0 +1,18 @@
+# Конфиденциальные файлы
+.env
+.env.*
+!.env.example
+test_db.php
+
+# Зависимости
+/vendor/
+/node_modules/
+
+# Временные файлы
+*.log
+*.tmp
+
+# Загруженные файлы
+/storage/uploads/*
+!/storage/uploads/.gitkeep
+!/storage/uploads/.htaccess
