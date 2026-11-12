@@ -1,0 +1,41 @@
+
+@startuml er-diagram
+title NewsPortal: логическая модель (ER)
+
+hide circle
+skinparam linetype ortho
+
+entity users {
+  * id : INT <<PK>>
+  --
+}
+
+entity categories {
+  * id : INT <<PK>>
+  --
+}
+
+entity articles {
+  * id : INT <<PK>>
+  --
+  * author_id : INT UNSIGNED <<FK>>
+  * category_id : INT UNSIGNED <<FK>>
+}
+
+entity media {
+  * id : INT UNSIGNED <<PK>>
+  --
+  article_id : INT UNSIGNED <<FK>>
+  * user_id : INT UNSIGNED <<FK>>
+  * file_name : VARCHAR(255)
+  * file_path : VARCHAR(500)
+  * mime_type : VARCHAR(100)
+  * uploaded_at : TIMESTAMP
+}
+
+users ||--o{ articles : author_id
+categories ||--o{ articles : category_id
+users ||--o{ media : user_id
+articles |o--o{ media : article_id
+
+@enduml
