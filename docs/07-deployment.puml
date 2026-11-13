@@ -1,0 +1,103 @@
+
+@startuml
+title NewsPortal - Detailed Deployment Diagram
+
+left to right direction
+
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam nodesep 55
+skinparam ranksep 55
+
+skinparam node {
+    BackgroundColor #EAF2F8
+    BorderColor #2874A6
+}
+
+skinparam database {
+    BackgroundColor #D5F5E3
+    BorderColor #239B56
+}
+
+skinparam component {
+    BackgroundColor #FCF3CF
+    BorderColor #B7950B
+}
+
+actor "User" as User
+
+node "Client Device" as Client {
+    artifact "Web Browser\nChrome / Firefox" as Browser
+}
+
+cloud "Internet" as Internet
+
+node "Local Web Server\nXAMPP" as Server {
+
+    component "Apache HTTP Server\nPort 80 / 443" as Apache
+
+    package "NewsPortal PHP Application" {
+
+        component "index.php\nMain Page" as Main
+
+        component "Authentication Module" as Auth
+
+        component "Article Management" as Articles
+
+        component "Category Management" as Categories
+
+        component "Comment Management" as Comments
+
+        component "Admin Panel" as Admin
+
+        component "Media Management" as Media
+    }
+
+    folder "Project Files" as Files {
+        artifact "PHP / HTML / CSS / JS" as Source
+    }
+
+    folder "uploads/" as Uploads {
+        artifact "Images and Media Files" as Images
+    }
+}
+
+node "Database Server" as DBServer {
+    database "MariaDB\nnews_portal" as DB {
+        folder "Database Tables" {
+            artifact "users / roles" as Users
+            artifact "articles / article_translations" as ArticleTables
+            artifact "categories / category_translations" as CategoryTables
+            artifact "comments / editorial_decisions" as CommentTables
+            artifact "tags / article_tags" as TagTables
+            artifact "media / notifications" as OtherTables
+        }
+    }
+}
+
+User --> Browser : Uses
+Browser --> Internet : HTTP / HTTPS
+Internet --> Apache : HTTP Request
+
+Apache --> Main : Executes PHP
+
+Main --> Auth : Login / Registration
+Main --> Articles : Display Articles
+Main --> Categories : Display Categories
+Main --> Comments : Manage Comments
+Main --> Admin : Administration
+Main --> Media : Upload Media
+
+Auth --> DB : User Authentication
+Articles --> DB : Read / Write Articles
+Categories --> DB : Read Categories
+Comments --> DB : Read / Write Comments
+Admin --> DB : Manage Users and Roles
+Media --> DB : Save Media Metadata
+
+Main --> Source : Loads Application Files
+Media --> Uploads : Stores Uploaded Files
+
+@enduml
