@@ -104,10 +104,12 @@ $news = $news ?? [];
                                 <?php endif; ?>
                             </div>
 
-                            <a href="#" class="read-more">
-                                Муфассалтар →
-                            </a>
-
+                            <a
+    href="/NewsPortal/news/<?= rawurlencode($item['slug']) ?>"
+    class="read-more"
+>
+    Муфассалтар →
+</a>
                         </div>
                     </article>
 

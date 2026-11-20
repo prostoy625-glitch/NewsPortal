@@ -1,4 +1,5 @@
 
+
 <?php
 
 class Router
@@ -36,11 +37,30 @@ class Router
             $uri = '/';
         }
 
-        $callback = $this->routes[$method][$uri] ?? null;
+        foreach ($this->routes[$method] ?? [] as $route => $callback) {
+            $parts = explode('/', trim($route, '/'));
+            $pattern = '';
 
-        if ($callback !== null) {
-            call_user_func($callback);
-            return;
+            foreach ($parts as $part) {
+                if (str_starts_with($part, ':')) {
+                    $pattern .= '/([^/]+)';
+                } else {
+                    $pattern .= '/' . preg_quote($part, '#');
+                }
+            }
+
+            if ($route === '/') {
+                $pattern = '/';
+            }
+
+            if (preg_match('#^' . $pattern . '$#', $uri, $matches)) {
+                array_shift($matches);
+
+                $params = array_map('urldecode', $matches);
+
+                call_user_func_array($callback, $params);
+                return;
+            }
         }
 
         http_response_code(404);
