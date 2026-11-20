@@ -3,19 +3,6 @@
 $news = $news ?? [];
 ?>
 
-<!DOCTYPE html>
-<html lang="tg">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title><?= htmlspecialchars($title ?? 'NewsPortal', ENT_QUOTES, 'UTF-8') ?></title>
-
-    <link rel="stylesheet"
-          href="/NewsPortal/public/assets/css/style.css">
-</head>
-<body>
-
 <header class="site-header">
     <div class="container header-content">
 
@@ -50,7 +37,6 @@ $news = $news ?? [];
     </section>
 
     <section class="hero-section container">
-
         <div class="hero-content">
             <span class="section-label">ПОРТАЛИ ХАБАРҲО</span>
 
@@ -66,7 +52,6 @@ $news = $news ?? [];
                 Хондани хабарҳо
             </a>
         </div>
-
     </section>
 
     <section class="latest-news container" id="latest-news">
@@ -92,68 +77,38 @@ $news = $news ?? [];
                 <?php foreach ($news as $item): ?>
 
                     <article class="news-card">
-
                         <div class="news-card-content">
 
                             <span class="news-category">
-                                <?= htmlspecialchars(
-                                    $item['category'] ?? 'Тоҷикистон',
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>
+                                <?= htmlspecialchars($item['category'] ?? 'Тоҷикистон', ENT_QUOTES, 'UTF-8') ?>
                             </span>
 
                             <h3>
-                                <?= htmlspecialchars(
-                                    $item['title'],
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>
+                                <?= htmlspecialchars($item['title'] ?? '', ENT_QUOTES, 'UTF-8') ?>
                             </h3>
 
                             <p>
-                                <?= htmlspecialchars(
-                                    $item['excerpt'] ?? '',
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>
+                                <?= htmlspecialchars($item['excerpt'] ?? '', ENT_QUOTES, 'UTF-8') ?>
                             </p>
 
                             <div class="news-meta">
-
                                 <span>
                                     Муаллиф:
-                                    <?= htmlspecialchars(
-                                        $item['author'] ?? '',
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>
+                                    <?= htmlspecialchars($item['author'] ?? '', ENT_QUOTES, 'UTF-8') ?>
                                 </span>
 
                                 <?php if (!empty($item['published_at'])): ?>
-                                    <time datetime="<?= htmlspecialchars(
-                                        $item['published_at'],
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>">
-                                        <?= date(
-                                            'd.m.Y',
-                                            strtotime($item['published_at'])
-                                        ) ?>
+                                    <time datetime="<?= htmlspecialchars($item['published_at'], ENT_QUOTES, 'UTF-8') ?>">
+                                        <?= date('d.m.Y', strtotime($item['published_at'])) ?>
                                     </time>
                                 <?php endif; ?>
-
                             </div>
 
-                            <a
-                                href="#"
-                                class="read-more"
-                            >
+                            <a href="#" class="read-more">
                                 Муфассалтар →
                             </a>
 
                         </div>
-
                     </article>
 
                 <?php endforeach; ?>
@@ -161,7 +116,6 @@ $news = $news ?? [];
             <?php endif; ?>
 
         </div>
-
     </section>
 
 </main>
@@ -171,9 +125,7 @@ $news = $news ?? [];
 
         <h2>NewsPortal</h2>
 
-        <p>
-            Сомонаи иттилоотии Тоҷикистон ва ҷаҳон.
-        </p>
+        <p>Сомонаи иттилоотии Тоҷикистон ва ҷаҳон.</p>
 
         <p>
             © <?= date('Y') ?> NewsPortal.
@@ -182,9 +134,3 @@ $news = $news ?? [];
 
     </div>
 </footer>
-
-<script src="/NewsPortal/public/assets/js/main.js"></script>
-
-</body>
-</html>
-

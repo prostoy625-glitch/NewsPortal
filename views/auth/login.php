@@ -4,27 +4,17 @@ $error = $_SESSION['login_error'] ?? null;
 unset($_SESSION['login_error']);
 ?>
 
-<!DOCTYPE html>
-<html lang="tg">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($title ?? 'Воридшавӣ') ?></title>
-
-    <link rel="stylesheet" href="/NewsPortal/public/assets/css/style.css">
-</head>
-<body>
-
 <div class="login-container">
 
     <div class="login-card">
 
         <h1>NewsPortal</h1>
+
         <h2>Воридшавӣ ба система</h2>
 
         <?php if ($error): ?>
             <div class="error-message">
-                <?= htmlspecialchars($error) ?>
+                <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
             </div>
         <?php endif; ?>
 
@@ -33,11 +23,13 @@ unset($_SESSION['login_error']);
             <input
                 type="hidden"
                 name="csrf_token"
-                value="<?= htmlspecialchars($csrfToken) ?>"
+                value="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES, 'UTF-8') ?>"
             >
 
             <div class="form-group">
+
                 <label for="email">Email</label>
+
                 <input
                     type="email"
                     id="email"
@@ -45,10 +37,13 @@ unset($_SESSION['login_error']);
                     required
                     autocomplete="username"
                 >
+
             </div>
 
             <div class="form-group">
+
                 <label for="password">Парол</label>
+
                 <input
                     type="password"
                     id="password"
@@ -56,6 +51,7 @@ unset($_SESSION['login_error']);
                     required
                     autocomplete="current-password"
                 >
+
             </div>
 
             <button type="submit">Ворид шудан</button>
@@ -67,6 +63,3 @@ unset($_SESSION['login_error']);
     </div>
 
 </div>
-
-</body>
-</html>
