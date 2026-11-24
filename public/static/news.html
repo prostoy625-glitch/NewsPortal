@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ҷустуҷӯи хабарҳо — NewsPortal</title>
+
+    <link rel="stylesheet" href="/NewsPortal/public/assets/CSS/style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="container header-content">
+        <a href="/NewsPortal/" class="logo">
+            News<span>Portal</span>
+        </a>
+    </div>
+</header>
+
+<main class="container">
+    <section class="latest-news">
+        <div class="section-heading">
+            <div>
+                <span class="section-label">NEWS PORTAL</span>
+                <h1>Ҷустуҷӯи хабарҳо</h1>
+            </div>
+        </div>
+
+        <div class="news-search">
+            <label for="news-search-input">
+                Номи хабарро ворид кунед
+            </label>
+
+            <input
+                type="search"
+                id="news-search-input"
+                placeholder="Ҷустуҷӯи хабар..."
+                autocomplete="off"
+            >
+
+            <p
+                id="news-search-status"
+                role="status"
+                aria-live="polite"
+            ></p>
+
+            <div
+                id="news-search-results"
+                class="news-grid"
+                hidden
+            ></div>
+        </div>
+    </section>
+</main>
+
+<script type="module" src="/NewsPortal/public/assets/js/app.js"></script>
+
+</body>
+</html>

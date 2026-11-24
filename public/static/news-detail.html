@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Хабар — NewsPortal</title>
+
+    <link rel="stylesheet"
+          href="/NewsPortal/public/assets/CSS/style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="container header-content">
+        <a href="/NewsPortal/" class="logo">
+            News<span>Portal</span>
+        </a>
+    </div>
+</header>
+
+<main class="container">
+    <section class="latest-news">
+
+        <span class="section-label">NEWS PORTAL</span>
+
+        <h1>Хабари намунавӣ</h1>
+
+        <p>
+            Ин саҳифаи намунавӣ барои санҷидани
+            равзанаи тасдиқи нест кардани хабар мебошад.
+        </p>
+
+        <article class="news-card">
+            <div class="news-card-content">
+
+                <h2>Навигариҳои технология</h2>
+
+                <p>
+                    Ин як хабари санҷишӣ барои
+                    лабораторияи №11 мебошад.
+                </p>
+
+                <button
+                    type="button"
+                    class="delete-news-btn"
+                    data-id="1"
+                >
+                    Нест кардани хабар
+                </button>
+
+            </div>
+        </article>
+
+    </section>
+</main>
+
+<!-- Delete confirmation modal -->
+<div id="delete-modal" hidden>
+    <div
+        class="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-modal-title"
+    >
+        <h2 id="delete-modal-title">
+            Тасдиқи несткунӣ
+        </h2>
+
+        <p>
+            Оё шумо мехоҳед ин хабарро нест кунед?
+        </p>
+
+        <button type="button" id="cancel-delete">
+            Бекор кардан
+        </button>
+
+        <button type="button" id="confirm-delete">
+            Нест кардан
+        </button>
+    </div>
+</div>
+
+<script
+    type="module"
+    src="/NewsPortal/public/assets/js/app.js">
+</script>
+
+</body>
+</html>
+
