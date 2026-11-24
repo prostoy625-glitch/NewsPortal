@@ -16,3 +16,4 @@ test_db.php
 /storage/uploads/*
 !/storage/uploads/.gitkeep
 !/storage/uploads/.htaccess
+/config/config.php

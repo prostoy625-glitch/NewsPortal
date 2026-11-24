@@ -649,3 +649,51 @@ a {
 #news-search-results[hidden] {
     display: none;
 }
+
+
+/* Practice 13: Filters */
+
+.news-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.news-filters input,
+.news-filters select {
+    padding: 12px;
+    border: 1px solid #e4e7ec;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.news-filters input {
+    flex: 1;
+    min-width: 180px;
+}
+
+/* Pagination */
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 32px 0;
+}
+
+.pagination a {
+    padding: 10px 15px;
+    border: 1px solid #e4e7ec;
+    border-radius: 8px;
+    color: #155eef;
+    text-decoration: none;
+}
+
+.pagination a:hover,
+.pagination a.active {
+    background: #155eef;
+    color: white;
+}

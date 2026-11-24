@@ -1,59 +1,97 @@
 
 <?php
-
-require_once __DIR__ . '/../../core/Database.php';
+require_once __DIR__ . '/../Repositories/CategoryRepository.php';
+require_once __DIR__ . '/../Repositories/NewsRepository.php';
 require_once __DIR__ . '/../../core/View.php';
-
 
 class HomeController
 {
     public function index(): void
     {
         $news = [];
+$categories = [];
         $databaseStatus = 'Подключение не проверено';
 
+        // Получаем поисковый запрос
+        $search = $_GET['search'] ?? '';
+        $search = is_string($search) ? trim($search) : '';
+        $search = mb_substr($search, 0, 100, 'UTF-8');
+
+        // Получаем категорию
+        $category = filter_input(
+            INPUT_GET,
+            'category',
+            FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => 1]]
+        );
+
+        $categoryId = is_int($category) ? $category : null;
+
+        // Получаем номер страницы
+        $page = filter_input(
+            INPUT_GET,
+            'page',
+            FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => 1]]
+        );
+
+        $page = is_int($page) ? $page : 1;
+
+        $perPage = 5;
+        $totalNews = 0;
+        $totalPages = 0;
+
         try {
-            $pdo = Database::connect();
+            $repository = new NewsRepository();
+$categoryRepository = new CategoryRepository();
+$categories = $categoryRepository->getAll();
 
-            $sql = "
-                SELECT
-                    a.id,
-                    a.status,
-                    a.published_at,
-                    t.title,
-                    t.slug,
-                    t.excerpt,
-                    t.content,
-                    u.full_name AS author,
-                    ct.name AS category
-                FROM articles AS a
-                INNER JOIN article_translations AS t
-                    ON t.article_id = a.id
-                INNER JOIN users AS u
-                    ON u.id = a.author_id
-                LEFT JOIN category_translations AS ct
-                    ON ct.category_id = a.category_id
-                    AND ct.language_code = 'tg'
-                WHERE a.status = 'published'
-                    AND t.language_code = 'tg'
-                    AND t.translation_status = 'published'
-                ORDER BY a.published_at DESC, a.id DESC
-                LIMIT 12
-            ";
+            // Подсчитываем количество новостей
+            $totalNews = $repository->countPublished(
+                $search,
+                $categoryId
+            );
 
-            $news = $pdo->query($sql)->fetchAll();
+            // Определяем количество страниц
+            $totalPages = (int) ceil($totalNews / $perPage);
+
+            // Не позволяем выйти за последнюю страницу
+            if ($totalPages > 0) {
+                $page = min($page, $totalPages);
+            } else {
+                $page = 1;
+            }
+
+            // Получаем новости текущей страницы
+            $news = $repository->getPublishedPaginated(
+                $search,
+                $categoryId,
+                $page,
+                $perPage
+            );
 
             $databaseStatus = 'MySQL подключён успешно!';
 
-        } catch (PDOException $e) {
+        } catch (Throwable $e) {
             error_log($e->getMessage());
-            $databaseStatus = 'Хатогӣ ҳангоми пайвастшавӣ ба базаи маълумот.';
+
+            http_response_code(500);
+
+            $databaseStatus =
+                'Хатогӣ ҳангоми гирифтани хабарҳо.';
         }
 
         View::render('home', [
             'title' => 'NewsPortal',
             'databaseStatus' => $databaseStatus,
-            'news' => $news
+            'news' => $news,
+            'search' => $search,
+            'categoryId' => $categoryId,
+            'page' => $page,
+            'perPage' => $perPage,
+            'totalNews' => $totalNews,
+'categories' => $categories,
+            'totalPages' => $totalPages
         ]);
     }
 }
