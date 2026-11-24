@@ -7,6 +7,13 @@ require_once __DIR__ . '/../../core/View.php';
 
 class NewsController
 {
+public function create(): void
+{
+    // Пока только отображаем учебную форму
+    View::render('news/create', [
+        'title' => 'Илова кардани хабар'
+    ]);
+}
     public function show(string $slug): void
     {
         try {

@@ -62,6 +62,23 @@ $news = $news ?? [];
                 <h2>Хабарҳои охирин</h2>
             </div>
         </div>
+<!-- Practice 11: Live Search -->
+<div class="news-search">
+    <label for="news-search-input">
+        Ҷустуҷӯи хабарҳо
+    </label>
+
+    <input
+        type="search"
+        id="news-search-input"
+        placeholder="Номи хабарро нависед..."
+        autocomplete="off"
+    >
+
+    <p id="news-search-status" role="status" aria-live="polite"></p>
+
+    <div id="news-search-results" class="news-grid" hidden></div>
+</div>
 
         <div class="news-grid">
 

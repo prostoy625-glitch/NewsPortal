@@ -14,6 +14,7 @@
     <?= $content ?? '' ?>
 
     <script src="/NewsPortal/public/assets/js/main.js"></script>
+<script type="module" src="/NewsPortal/public/assets/js/app.js"></script>
 
 </body>
 </html>

@@ -18,10 +18,14 @@ $newsController = new NewsController();
 // Главная страница
 $router->get('/', [$homeController, 'index']);
 
-// Отдельная страница новости
+// Форма создания новости
+$router->get('/news/create', [$newsController, 'create']);
+
+// Просмотр отдельной новости
 $router->get('/news/:slug', [$newsController, 'show']);
 
 // Авторизация
+$router->get('/news/create', [$newsController, 'create']);
 $router->get('/login', [$authController, 'showLogin']);
 $router->post('/login', [$authController, 'login']);
 
