@@ -1,16 +1,22 @@
 <?php
 
-require_once __DIR__ . '/../../core/Auth.php';
-require_once __DIR__ . '/../../core/View.php';
+namespace App\Controllers;
 
-class DashboardController
+require_once __DIR__ . '/../../core/Auth.php';
+
+class DashboardController extends Controller
+
+
 {
     public function index(): void
     {
-        Auth::requireLogin();
+        // Проверяем, авторизован ли пользователь
+        \Auth::requireLogin();
 
+        // Получаем роль пользователя из сессии
         $role = $_SESSION['role'] ?? '';
 
+        // Названия ролей
         $roleTitles = [
             'ADMIN' => 'Администратор',
             'EDITOR' => 'Муҳаррир',
@@ -18,7 +24,8 @@ class DashboardController
             'READER' => 'Хонанда'
         ];
 
-        View::render('dashboard/index', [
+        // Отображаем панель управления через базовый Controller
+        $this->render('dashboard/index', [
             'title' => 'Панели идоракунӣ — NewsPortal',
             'fullName' => $_SESSION['full_name'] ?? '',
             'role' => $role,

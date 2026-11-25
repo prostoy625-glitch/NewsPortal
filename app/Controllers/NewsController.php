@@ -1,29 +1,31 @@
-
 <?php
 
+namespace App\Controllers;
+
+use PDOException;
+use Throwable;
 require_once __DIR__ . '/../../core/Database.php';
-require_once __DIR__ . '/../../core/View.php';
 require_once __DIR__ . '/../../core/Auth.php';
 
 require_once __DIR__ . '/../Repositories/NewsRepository.php';
 require_once __DIR__ . '/../Repositories/CategoryRepository.php';
 require_once __DIR__ . '/../Validators/NewsValidator.php';
 
-class NewsController
+class NewsController extends Controller
 {
     // Отображение формы создания новости
     public function create(): void
     {
-        Auth::requireRole(['ADMIN', 'EDITOR', 'JOURNALIST']);
+        \Auth::requireRole(['ADMIN', 'EDITOR', 'JOURNALIST']);
 
         if (empty($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
 
         try {
-            $categoryRepository = new CategoryRepository();
+            $categoryRepository = new \CategoryRepository();
 
-            View::render('news/create', [
+            $this->render('news/create', [
                 'title' => 'Илова кардани хабар',
                 'categories' => $categoryRepository->getAll(),
                 'errors' => [],
@@ -33,15 +35,17 @@ class NewsController
         } catch (Throwable $e) {
             error_log($e->getMessage());
 
-            http_response_code(500);
-            echo 'Хатогӣ ҳангоми гирифтани категорияҳо.';
+            $this->abort(
+                500,
+                'Хатогӣ ҳангоми гирифтани категорияҳо.'
+            );
         }
     }
 
     // Сохранение новой новости
     public function store(): void
     {
-        Auth::requireRole(['ADMIN', 'EDITOR', 'JOURNALIST']);
+        \Auth::requireRole(['ADMIN', 'EDITOR', 'JOURNALIST']);
 
         // Проверка CSRF-токена
         if (
@@ -53,9 +57,10 @@ class NewsController
                 $_POST['csrf_token']
             )
         ) {
-            http_response_code(403);
-            echo 'Дархости нодуруст (CSRF).';
-            return;
+            $this->abort(
+                403,
+                'Дархости нодуруст (CSRF).'
+            );
         }
 
         // Получение данных формы
@@ -82,7 +87,7 @@ class NewsController
         $data['author_id'] = (int) $_SESSION['user_id'];
 
         // Серверная валидация
-        $errors = NewsValidator::validate($data);
+        $errors = \NewsValidator::validate($data);
 
         if (!empty($errors)) {
             $this->renderFormWithErrors($errors, $data);
@@ -90,17 +95,15 @@ class NewsController
         }
 
         try {
-            $repository = new NewsRepository();
+            $repository = new \NewsRepository();
 
             $articleId = $repository->create($data);
 
             // Перенаправление после успешного POST
-            header(
-                'Location: /NewsPortal/dashboard?created=' . $articleId,
-                true,
+            $this->redirect(
+                '/dashboard?created=' . $articleId,
                 303
             );
-            exit;
 
         } catch (PDOException $e) {
             error_log($e->getMessage());
@@ -109,17 +112,22 @@ class NewsController
                 $this->renderFormWithErrors([
                     'slug' => 'Slug такрорӣ аст ё маълумоти вобаста нодуруст мебошад.'
                 ], $data);
+
                 return;
             }
 
-            http_response_code(500);
-            echo 'Хатогӣ ҳангоми нигоҳ доштани хабар.';
+            $this->abort(
+                500,
+                'Хатогӣ ҳангоми нигоҳ доштани хабар.'
+            );
 
         } catch (Throwable $e) {
             error_log($e->getMessage());
 
-            http_response_code(500);
-            echo 'Хатогии дохилии сервер.';
+            $this->abort(
+                500,
+                'Хатогии дохилии сервер.'
+            );
         }
     }
 
@@ -129,22 +137,22 @@ class NewsController
         array $old
     ): void {
         try {
-            $categoryRepository = new CategoryRepository();
+            $categoryRepository = new \CategoryRepository();
 
-            http_response_code(422);
-
-            View::render('news/create', [
+            $this->render('news/create', [
                 'title' => 'Илова кардани хабар',
                 'categories' => $categoryRepository->getAll(),
                 'errors' => $errors,
                 'old' => $old
-            ]);
+            ], 422);
 
         } catch (Throwable $e) {
             error_log($e->getMessage());
 
-            http_response_code(500);
-            echo 'Хатогӣ ҳангоми гирифтани категорияҳо.';
+            $this->abort(
+                500,
+                'Хатогӣ ҳангоми гирифтани категорияҳо.'
+            );
         }
     }
 
@@ -152,7 +160,7 @@ class NewsController
     public function show(string $slug): void
     {
         try {
-            $pdo = Database::connect();
+            $pdo = \Database::connect();
 
             $sql = "
                 SELECT
@@ -188,12 +196,13 @@ class NewsController
             $news = $stmt->fetch();
 
             if (!$news) {
-                http_response_code(404);
-                echo 'Хабар ёфт нашуд.';
-                return;
+                $this->abort(
+                    404,
+                    'Хабар ёфт нашуд.'
+                );
             }
 
-            View::render('news/show', [
+            $this->render('news/show', [
                 'title' => $news['title'],
                 'news' => $news
             ]);
@@ -201,8 +210,10 @@ class NewsController
         } catch (PDOException $e) {
             error_log($e->getMessage());
 
-            http_response_code(500);
-            echo 'Хатогӣ ҳангоми гирифтани хабар.';
+            $this->abort(
+                500,
+                'Хатогӣ ҳангоми гирифтани хабар.'
+            );
         }
     }
 }

@@ -1,19 +1,24 @@
 
 <?php
 
-require_once __DIR__ . '/core/Router.php';
-require_once __DIR__ . '/app/Controllers/HomeController.php';
-require_once __DIR__ . '/app/Controllers/AuthController.php';
-require_once __DIR__ . '/app/Controllers/NewsController.php';
+
+
+// Composer PSR-4 autoload
+require_once __DIR__ . '/vendor/autoload.php';
+// Базовые компоненты MVC
+
+
+
+// Временная загрузка существующих классов NewsPortal
 require_once __DIR__ . '/core/Auth.php';
-require_once __DIR__ . '/app/Controllers/DashboardController.php';
 
-$router = new Router();
 
-$homeController = new HomeController();
-$authController = new AuthController();
-$dashboardController = new DashboardController();
-$newsController = new NewsController();
+$router = new \Core\Router();
+
+$homeController = new \App\Controllers\HomeController();
+$authController = new \App\Controllers\AuthController();
+$dashboardController = new \App\Controllers\DashboardController();
+$newsController = new \App\Controllers\NewsController();
 
 // Главная страница
 $router->get('/', [$homeController, 'index']);
@@ -30,9 +35,7 @@ $router->get('/news/:slug', [$newsController, 'show']);
 
 // Авторизация
 $router->get('/login', [$authController, 'showLogin']);
-$router->get('/login', [$authController, 'showLogin']);
 $router->post('/login', [$authController, 'login']);
-
 // Выход
 $router->post('/logout', [$authController, 'logout']);
 

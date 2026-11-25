@@ -1,15 +1,16 @@
-
 <?php
+
+namespace App\Controllers;
 require_once __DIR__ . '/../Repositories/CategoryRepository.php';
 require_once __DIR__ . '/../Repositories/NewsRepository.php';
 require_once __DIR__ . '/../../core/View.php';
 
-class HomeController
+class HomeController extends Controller
 {
     public function index(): void
     {
         $news = [];
-$categories = [];
+        $categories = [];
         $databaseStatus = 'Подключение не проверено';
 
         // Получаем поисковый запрос
@@ -17,7 +18,7 @@ $categories = [];
         $search = is_string($search) ? trim($search) : '';
         $search = mb_substr($search, 0, 100, 'UTF-8');
 
-        // Получаем категорию
+        // Получаем выбранную категорию
         $category = filter_input(
             INPUT_GET,
             'category',
@@ -40,13 +41,17 @@ $categories = [];
         $perPage = 5;
         $totalNews = 0;
         $totalPages = 0;
+        $status = 200;
 
         try {
-            $repository = new NewsRepository();
-$categoryRepository = new CategoryRepository();
-$categories = $categoryRepository->getAll();
+            // Создаём объекты репозиториев
+            $repository = new \NewsRepository();
+$categoryRepository = new \CategoryRepository();
 
-            // Подсчитываем количество новостей
+            // Получаем категории
+            $categories = $categoryRepository->getAll();
+
+            // Подсчитываем опубликованные новости
             $totalNews = $repository->countPublished(
                 $search,
                 $categoryId
@@ -55,7 +60,7 @@ $categories = $categoryRepository->getAll();
             // Определяем количество страниц
             $totalPages = (int) ceil($totalNews / $perPage);
 
-            // Не позволяем выйти за последнюю страницу
+            // Проверяем номер страницы
             if ($totalPages > 0) {
                 $page = min($page, $totalPages);
             } else {
@@ -75,13 +80,14 @@ $categories = $categoryRepository->getAll();
         } catch (Throwable $e) {
             error_log($e->getMessage());
 
-            http_response_code(500);
+            $status = 500;
 
             $databaseStatus =
                 'Хатогӣ ҳангоми гирифтани хабарҳо.';
         }
 
-        View::render('home', [
+        // Отображаем страницу через базовый Controller
+        $this->render('home', [
             'title' => 'NewsPortal',
             'databaseStatus' => $databaseStatus,
             'news' => $news,
@@ -90,8 +96,8 @@ $categories = $categoryRepository->getAll();
             'page' => $page,
             'perPage' => $perPage,
             'totalNews' => $totalNews,
-'categories' => $categories,
+            'categories' => $categories,
             'totalPages' => $totalPages
-        ]);
+        ], $status);
     }
 }
